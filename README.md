@@ -5,7 +5,8 @@
 #include <mcp_can.h>
 #include <SPI.h>
 #include <Wire.h>
-/* #include <LCD.h>
+/* 
+#include <LCD.h>
 #include <LiquidCrystal_I2C.h>
 
 #define I2C_ADDR    0x27  // Define I2C Address where the PCF8574A is
@@ -16,7 +17,8 @@
 #define D4_pin  4
 #define D5_pin  5
 #define D6_pin  6
-#define D7_pin  7 */
+#define D7_pin  7 
+*/
 
 int n = 1;
 
@@ -95,17 +97,20 @@ const float Sensorless_Speed = 0;  // Set the threshold for sensorless at ??? m/
 void ReadButton(int buttonPin, boolean &lastBtnState, boolean &buttonState, boolean &output, long &lastDebounceTime) {
   int reading = digitalRead(buttonPin);
 
-  if (reading != lastBtnState) {
+  if (reading != lastBtnState) 
+  {
     // reset the debouncing timer
     lastDebounceTime = millis();
   }
 
   if ((millis() - lastDebounceTime) > debounceDelay) {
     // if the button state has changed:
-    if (reading != buttonState) {
+    if (reading != buttonState)
+    {
       buttonState = reading;
       
-      if(buttonState) {
+      if(buttonState) 
+      {
         output = !output;
         Serial.println(buttonPin);
         Serial.println(output);
@@ -117,7 +122,8 @@ void ReadButton(int buttonPin, boolean &lastBtnState, boolean &buttonState, bool
 }
 
 // Read the potentiometers
-void PotRead(int Pin, int &Raw, float &Float, int &Min, int &Max) {
+void PotRead(int Pin, int &Raw, float &Float, int &Min, int &Max) 
+{
   Raw = analogRead(Pin);
   
   if (Raw < Min) Raw = Min;
@@ -126,7 +132,8 @@ void PotRead(int Pin, int &Raw, float &Float, int &Min, int &Max) {
   Float = (float)(Raw-Min)/(Max-Min);
 }
 
-void filterRegenPot() {
+void filterRegenPot() 
+{
   movAvg[index] = analogRead(Rgn_Pot);
 
   if (movAvg[index] < RPot_min) movAvg[index] = RPot_min;  
@@ -136,7 +143,8 @@ void filterRegenPot() {
   else index++;
   
   sumAvg = 0;
-  for(int j = 0; j<10; j++) {
+  for(int j = 0; j<10; j++) 
+  {
     sumAvg += movAvg[j];
   }
   
@@ -149,7 +157,8 @@ void filterRegenPot() {
 }
 
 // Unpack the floats
-unsigned long unpackFloat(const unsigned char *buffer) {
+unsigned long unpackFloat(const unsigned char *buffer) 
+{
   const byte *b = buffer;
   long temp = 0;
 
@@ -161,7 +170,8 @@ unsigned long unpackFloat(const unsigned char *buffer) {
 }
 
 
-void setup() {
+void setup() 
+{
   // Declare Digital Inputs
   pinMode(CC_btn, INPUT);
   pinMode(Brake_sw, INPUT);
@@ -205,7 +215,8 @@ void setup() {
   Serial.println("CAN BUS Shield init ok!");
 }
 
-void loop() {
+void loop() 
+{
   
   
   //lcd.setBacklight(HIGH);
@@ -297,18 +308,22 @@ void loop() {
   // Cruise control is on if it is switched on the the car is not in reverse or braking
   CC = CC && !(Brakes || Regen_Active || Reverse);
   
-  if (Regen_Active) {
+  if (Regen_Active) 
+  {
     CAN_MotorDrive[0] = (float)0;    // Set the motor desired speed to 0 m/s
   }
-  else if (Reverse) {
+  else if (Reverse)
+  {
     CAN_MotorDrive[0] = (float)-100; // Set the motor desired speed to -100 m/s
   }
-  else {
+  else 
+  {
     CAN_MotorDrive[0] = (float)100;  // Set the motor desired speed to 100 m/s
   }
 
   if (Brakes) {
-    CAN_MotorDrive[1] = (float)0;   // Set the throttle to 0%
+
+CAN_MotorDrive[1] = (float)0;   // Set the throttle to 0%
   }
   else if (Regen_Active) {
     CAN_MotorDrive[1] = Rgn_Float;  // Set the throttle to the position of the regen pedal
@@ -321,7 +336,8 @@ void loop() {
     //if (Car_Speed >= Sensorless_Speed) {
       CAN_MotorDrive[0] = Speed_Float*100.0;  // Set the max speed according to the CC Speed Pot
       CAN_MotorDrive[1] = Torque_Float; // Set the max torque according to the CC Torque Pot
-    //}  
+    //
+    }  
   }
   
   CAN_MotorPower[0] = (float)0;      // These bits are reserved
@@ -341,7 +357,8 @@ void loop() {
   lcd.setCursor(7,3);
   lcd.print(CAN_MotorDrive[1]);
 */
-  if ((millis() - CAN_millis) > 5) {
+  if ((millis() - CAN_millis) > 5) 
+  {
     CAN_millis = millis();
     
     CAN.sendMsgBuf(Driver_ID+1, 0, 8, (unsigned char *)CAN_MotorDrive);
