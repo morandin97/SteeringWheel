@@ -4,22 +4,9 @@
 #include <mcp_can.h>
 #include <SPI.h>
 #include <Wire.h>
-/* #include <LCD.h>
-#include <LiquidCrystal_I2C.h>
 
-#define I2C_ADDR    0x27  // Define I2C Address where the PCF8574A is
-#define BACKLIGHT_PIN     3
-#define En_pin  2
-#define Rw_pin  1
-#define Rs_pin  0
-#define D4_pin  4
-#define D5_pin  5
-#define D6_pin  6
-#define D7_pin  7 */
 
 int n = 1;
-
-//LiquidCrystal_I2C	lcd(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin);
 
 // CS Pin
 const int SPI_CS_PIN = 10;
@@ -147,7 +134,7 @@ void filterRegenPot() {
   Rgn_Float = (float)(Rgn_Raw - RPot_min)/(RPot_max - RPot_min);
 }
 
-// Unpack the floats
+/*// Unpack the floats
 unsigned long unpackFloat(const unsigned char *buffer) {
   const byte *b = buffer;
   long temp = 0;
@@ -157,7 +144,7 @@ unsigned long unpackFloat(const unsigned char *buffer) {
   Serial.println(temp, HEX);
 
   return *((float *) &temp);
-}
+}*/
 
 
 void setup() {
@@ -183,18 +170,11 @@ void setup() {
   digitalWrite(Rgn_BrkLt, LOW);
   digitalWrite(Left_OUT, LOW);
   digitalWrite(Right_OUT, LOW);
-  
-  /* lcd.begin (20,4);
-  
-  // Switch on the backlight
-  lcd.setBacklightPin(BACKLIGHT_PIN,POSITIVE);
-  lcd.setBacklight(HIGH);
-  lcd.home ();                   // go home */
-  
+   
   // CAN INITIALIZATION
   Serial.begin(115200);
   
-  //initialize CAN BUS baud rate at 500kbps
+  /*//initialize CAN BUS baud rate at 500kbps
   while (CAN_OK != CAN.begin(CAN_500KBPS))
   {
     Serial.println("CAN BUS Shield init fail");
@@ -202,12 +182,9 @@ void setup() {
     delay(100);
   }
   Serial.println("CAN BUS Shield init ok!");
-}
+}*/
 
 void loop() {
-  
-  
-  //lcd.setBacklight(HIGH);
   
   // Read and the debounce the four buttons 
   ReadButton(CC_btn, xCC_State, CC_State, CC, lastCC);
@@ -234,62 +211,7 @@ void loop() {
   digitalWrite(Right_OUT, (Hazard || RightSig));
   digitalWrite(Left_OUT, (Hazard || LeftSig));
 
-/*  lcd.setCursor(0,0);
-  lcd.print("CC:");
-  lcd.setCursor(3,0);
-  if (CC) lcd.print("Y");
-  else lcd.print("N");
-  
-  lcd.setCursor(0,1);
-  lcd.print("<>:");
-  lcd.setCursor(3,1);
-  if (Hazard) lcd.print("Y");
-  else lcd.print("N");
-  
-  lcd.setCursor(0,2);
-  lcd.print(">>:");
-  lcd.setCursor(3,2);
-  if ((Hazard || RightSig)) lcd.print("Y");
-  else lcd.print("N");
-  
-  lcd.setCursor(0,3);
-  lcd.print("<<:");
-  lcd.setCursor(3,3);
-  if ((Hazard || LeftSig)) lcd.print("Y");
-  else lcd.print("N");
-  
-  lcd.setCursor(6,0);
-  lcd.print("Rg:");
-  lcd.setCursor(9,0);
-  if (Regen) lcd.print("Y");
-  else lcd.print("N");
-  
-  lcd.setCursor(6,1);
-  lcd.print("Rv:");
-  lcd.setCursor(9,1);
-  if (Reverse) lcd.print("Y");
-  else lcd.print("N");
 
-  lcd.setCursor(13,0);
-  lcd.print("Ac:");
-  lcd.setCursor(16,0);
-  lcd.print(Acc_Float);
-  
-  lcd.setCursor(13,1);
-  lcd.print("Rg:");
-  lcd.setCursor(16,1);
-  lcd.print(Rgn_Float);
-  
-  lcd.setCursor(13,2);
-  lcd.print("Tq:");
-  lcd.setCursor(16,2);
-  lcd.print(Torque_Float);
-  
-  lcd.setCursor(13,3);
-  lcd.print("Sp:");
-  lcd.setCursor(16,3);
-  lcd.print(Speed_Float);
-*/
   // Turn on the brake light if the regen or mechanical brakes are active
   digitalWrite(Rgn_BrkLt, (Brakes || Regen_Active));
   
@@ -325,21 +247,7 @@ void loop() {
   
   CAN_MotorPower[0] = (float)0;      // These bits are reserved
   CAN_MotorPower[1] = (float)1.0;    // Set controller to use 100% of the available BUS current 
-
-/*  lcd.setCursor(5,2);
-  lcd.print("V:");
-  lcd.setCursor(7,2);
-  lcd.print("      ");
-  lcd.setCursor(7,2);
-  lcd.print((int)CAN_MotorDrive[0]);
   
-  lcd.setCursor(5,3);
-  lcd.print("I:");
-  lcd.setCursor(7,3);
-  lcd.print("      ");
-  lcd.setCursor(7,3);
-  lcd.print(CAN_MotorDrive[1]);
-*/
   if ((millis() - CAN_millis) > 5) {
     CAN_millis = millis();
     
@@ -350,7 +258,7 @@ void loop() {
     unsigned char len = 0;
     unsigned char buf[8];
 
-    if(CAN_MSGAVAIL == CAN.checkReceive()) {            // check if data coming
+    /*if(CAN_MSGAVAIL == CAN.checkReceive()) {            // check if data coming
       CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data buf
 
       unsigned int canId = CAN.getCanId();
@@ -367,7 +275,7 @@ void loop() {
         
         Serial.println(Car_Speed);
       }
-    }
+    }*/
   }
   
 }
